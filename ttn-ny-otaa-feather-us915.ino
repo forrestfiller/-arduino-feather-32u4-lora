@@ -33,7 +33,7 @@
 #include <hal/hal.h>
 #include <SPI.h>
 // be sure to use the MCCI arduino-lmic lib, and remove any other arduino-lmic libs
-
+// also, I have commented out the serial lines to allow for battery use in this bat branch
 //#ifdef COMPILE_REGRESSION_TEST
 //# define FILLMEIN 0
 //#else
@@ -73,46 +73,46 @@ const lmic_pinmap lmic_pins = {
 };
 
 void onEvent (ev_t ev) {
-    Serial.print(os_getTime());
-    Serial.print(": ");
+    //Serial.print(os_getTime());
+    //Serial.print(": ");
     switch(ev) {
         case EV_SCAN_TIMEOUT:
-            Serial.println(F("EV_SCAN_TIMEOUT"));
+            //Serial.println(F("EV_SCAN_TIMEOUT"));
             break;
         case EV_BEACON_FOUND:
-            Serial.println(F("EV_BEACON_FOUND"));
+            //Serial.println(F("EV_BEACON_FOUND"));
             break;
         case EV_BEACON_MISSED:
-            Serial.println(F("EV_BEACON_MISSED"));
+            //Serial.println(F("EV_BEACON_MISSED"));
             break;
         case EV_BEACON_TRACKED:
-            Serial.println(F("EV_BEACON_TRACKED"));
+            //Serial.println(F("EV_BEACON_TRACKED"));
             break;
         case EV_JOINING:
-            Serial.println(F("EV_JOINING"));
+            //Serial.println(F("EV_JOINING"));
             break;
         case EV_JOINED:
-            Serial.println(F("EV_JOINED"));
+            //Serial.println(F("EV_JOINED"));
             {
               u4_t netid = 0;
               devaddr_t devaddr = 0;
               u1_t nwkKey[16];
               u1_t artKey[16];
               LMIC_getSessionKeys(&netid, &devaddr, nwkKey, artKey);
-              Serial.print("netid: ");
-              Serial.println(netid, DEC);
-              Serial.print("devaddr: ");
-              Serial.println(devaddr, HEX);
-              Serial.print("artKey: ");
+              //Serial.print("netid: ");
+              //Serial.println(netid, DEC);
+              //Serial.print("devaddr: ");
+              //Serial.println(devaddr, HEX);
+              //Serial.print("artKey: ");
               for (int i=0; i<sizeof(artKey); ++i) {
-                Serial.print(artKey[i], HEX);
+                //Serial.print(artKey[i], HEX);
               }
-              Serial.println("");
-              Serial.print("nwkKey: ");
+              //Serial.println("");
+              //Serial.print("nwkKey: ");
               for (int i=0; i<sizeof(nwkKey); ++i) {
-                Serial.print(nwkKey[i], HEX);
+                //Serial.print(nwkKey[i], HEX);
               }
-              Serial.println("");
+              //Serial.println("");
 
               LMIC_setSeqnoUp(140);
             }
@@ -121,45 +121,45 @@ void onEvent (ev_t ev) {
             LMIC_setLinkCheckMode(0);
             break;
         case EV_RFU1:
-            Serial.println(F("EV_RFU1"));
+            //Serial.println(F("EV_RFU1"));
             break;
         case EV_JOIN_FAILED:
-            Serial.println(F("EV_JOIN_FAILED"));
+            //Serial.println(F("EV_JOIN_FAILED"));
             break;
         case EV_REJOIN_FAILED:
-            Serial.println(F("EV_REJOIN_FAILED"));
+            //Serial.println(F("EV_REJOIN_FAILED"));
             break;
             break;
         case EV_TXCOMPLETE:
-            Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
+            //Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
             if (LMIC.txrxFlags & TXRX_ACK)
-              Serial.println(F("Received ack"));
+              //Serial.println(F("Received ack"));
             if (LMIC.dataLen) {
-              Serial.println(F("Received "));
-              Serial.println(LMIC.dataLen);
-              Serial.println(F(" bytes of payload"));
+              //Serial.println(F("Received "));
+              //Serial.println(LMIC.dataLen);
+              //Serial.println(F(" bytes of payload"));
             }
             // Schedule next transmission
             os_setTimedCallback(&sendjob, os_getTime()+sec2osticks(TX_INTERVAL), do_send);
             break;
         case EV_LOST_TSYNC:
-            Serial.println(F("EV_LOST_TSYNC"));
+            //Serial.println(F("EV_LOST_TSYNC"));
             break;
         case EV_RESET:
-            Serial.println(F("EV_RESET"));
+            //Serial.println(F("EV_RESET"));
             break;
         case EV_RXCOMPLETE:
             // data received in ping slot
-            Serial.println(F("EV_RXCOMPLETE"));
+            //Serial.println(F("EV_RXCOMPLETE"));
             break;
         case EV_LINK_DEAD:
-            Serial.println(F("EV_LINK_DEAD"));
+            //Serial.println(F("EV_LINK_DEAD"));
             break;
         case EV_LINK_ALIVE:
-            Serial.println(F("EV_LINK_ALIVE"));
+            //Serial.println(F("EV_LINK_ALIVE"));
             break;
          default:
-            Serial.println(F("Unknown event"));
+            //Serial.println(F("Unknown event"));
             break;
     }
 }
@@ -167,11 +167,11 @@ void onEvent (ev_t ev) {
 void do_send(osjob_t* j){
     // Check if there is not a current TX/RX job running
     if (LMIC.opmode & OP_TXRXPEND) {
-        Serial.println(F("OP_TXRXPEND, not sending"));
+        //Serial.println(F("OP_TXRXPEND, not sending"));
     } else {
         // Prepare upstream data transmission at the next possible time.
         LMIC_setTxData2(1, mydata, sizeof(mydata)-1, 0);
-        Serial.println(F("Packet queued"));
+        //Serial.println(F("Packet queued"));
     }
     // Next TX is scheduled after TX_COMPLETE event.
 }
@@ -180,8 +180,8 @@ void setup() {
     delay(5000);
     while (! Serial)
         ;
-    Serial.begin(9600);
-    Serial.println(F("Starting"));
+    //Serial.begin(9600);
+    //Serial.println(F("Starting"));
 
     #ifdef VCC_ENABLE
     // For Pinoccio Scout boards
