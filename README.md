@@ -8,4 +8,7 @@
 6. Watch your console on TTN and check your serial monitor on your local machine to see if things are talking!
 
 
+TO-DO:
+### Once this repo is better documented I will share it in the TTN-NY blog
 
+### Report conditions and build out the functionality a bit
